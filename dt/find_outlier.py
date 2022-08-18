@@ -19,7 +19,7 @@ import numpy as np
 
 def knn_outlier(X_train, Y_train, contamination):
     """
-    @description  :KNN离群分析(0 inlier 1 outlier)
+    @description  :KNN outlier analysis(0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -39,7 +39,7 @@ def knn_outlier(X_train, Y_train, contamination):
 
 def abod_outlier(X_train, Y_train, contamination):
     """
-    @description  :ABOD 离群分析(0 inlier 1 outlier)
+    @description  :ABOD outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -60,7 +60,7 @@ def abod_outlier(X_train, Y_train, contamination):
 
 def autoEncoder_outlier(X_train, Y_train, contamination):
     """
-    @description  :autoEncoder 离群分析(0 inlier 1 outlier)
+    @description  :autoEncoder outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -81,7 +81,7 @@ def autoEncoder_outlier(X_train, Y_train, contamination):
 
 def cblof_outlier(X_train, Y_train, contamination):
     """
-    @description  :CBLOF 离群分析(0 inlier 1 outlier)
+    @description  :CBLOF outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -102,7 +102,7 @@ def cblof_outlier(X_train, Y_train, contamination):
 
 def hbos_outlier(X_train, Y_train, contamination):
     """
-    @description  :HBOS 离群分析(0 inlier 1 outlier)
+    @description  :HBOS outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -123,7 +123,7 @@ def hbos_outlier(X_train, Y_train, contamination):
 
 def I_forest_outlier(X_train, Y_train, contamination):
     """
-    @description  :I-forest 离群分析(0 inlier 1 outlier)
+    @description  :I-forest outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -143,7 +143,7 @@ def I_forest_outlier(X_train, Y_train, contamination):
 
 def lof_outlier(X_train, Y_train, contamination):
     """
-    @description  :LOF 离群分析(0 inlier 1 outlier)
+    @description  :LOF outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -164,7 +164,7 @@ def lof_outlier(X_train, Y_train, contamination):
 
 def mcd_outlier(X_train, Y_train, contamination):
     """
-    @description  :MCD 离群分析(0 inlier 1 outlier)
+    @description  :MCD outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -185,7 +185,7 @@ def mcd_outlier(X_train, Y_train, contamination):
 
 def so_gaal_outlier(X_train, Y_train, contamination):
     """
-    @description  :So-gaal 离群分析(0 inlier 1 outlier)
+    @description  :So-gaal outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -206,7 +206,7 @@ def so_gaal_outlier(X_train, Y_train, contamination):
 
 def ocsvm_outlier(X_train, Y_train, contamination):
     """
-    @description  :OCSVM 离群分析(0 inlier 1 outlier)
+    @description  :OCSVM outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -227,7 +227,7 @@ def ocsvm_outlier(X_train, Y_train, contamination):
 
 def sos_outlier(X_train, Y_train, contamination):
     """
-    @description  :SOS 离群分析(0 inlier 1 outlier)
+    @description  :SOS outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -248,7 +248,7 @@ def sos_outlier(X_train, Y_train, contamination):
 
 def pca_outlier(X_train, Y_train, contamination):
     """
-    @description  :PCA 离群分析(0 inlier 1 outlier)
+    @description  :PCA outlier analysis (0 inlier 1 outlier)
     ---------
     @param  :
     -------
@@ -269,7 +269,7 @@ def pca_outlier(X_train, Y_train, contamination):
 
 def ellipticEnvelope_outlier(X_train, Y_train, contamination):
     """
-    @description  :EllipticEnvelope 离群分析(1 inlier -1 outlier)
+    @description  :EllipticEnvelope outlier analysis (1 inlier -1 outlier)
     ---------
     @param  :
     -------

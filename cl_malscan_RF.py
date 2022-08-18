@@ -4,12 +4,16 @@ from cleanlab.latent_estimation import estimate_cv_predicted_probabilities
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_predict
+from sklearn.model_selection import GridSearchCV
 import numpy as np
 import random
 import csv
 from itertools import islice
 import argparse
 import time
+
+noise_ratio = 5
 
 def feature_extraction(file):
     vectors = []
@@ -24,30 +28,30 @@ def feature_extraction(file):
             vectors.append(vector)
             labels.append(label)
             samples.append(sample_name)
-    with open('new_samples_malscan_35n.txt', 'w') as sf:
+    with open('samples_malscan_%sn.txt'%noise_ratio, 'w') as sf:
         sf.write(str(samples))
-
     return vectors, labels
 
 def degree_centrality_feature(feature_dir):
-    feature_csv = feature_dir + 'degree-with-10n.csv'
+    feature_csv = feature_dir + 'degree-with-%sn.csv'%noise_ratio
     vectors, labels = feature_extraction(feature_csv)
     return vectors, labels
 
 def katz_centrality_feature(feature_dir):
-    feature_csv = feature_dir + 'katz-with-10n.csv'
+    feature_csv = feature_dir + 'katz-with-%sn.csv'%noise_ratio
     vectors, labels = feature_extraction(feature_csv)
     return vectors, labels
 
 def closeness_centrality_feature(feature_dir):
-    feature_csv = feature_dir + 'closeness-with-30n.csv'
+    feature_csv = feature_dir + 'closeness-with-%sn.csv'%noise_ratio
     vectors, labels = feature_extraction(feature_csv)
     return vectors, labels
 
 def harmonic_centrality_feature(feature_dir):
-    feature_csv = feature_dir + 'harmonic-with-35n.csv'
+    feature_csv = feature_dir + 'harmonic-with-%sn.csv'%noise_ratio
     vectors, labels = feature_extraction(feature_csv)
     return vectors, labels
+
 
 def random_features(vectors, labels):
     Vec_Lab = []
@@ -61,10 +65,11 @@ def random_features(vectors, labels):
 
     return [m[:-1] for m in Vec_Lab], [m[-1] for m in Vec_Lab]
 
-def classification(vectors, labels, noise):
+def predict_noise(vectors, labels):
     x_train = np.array(vectors)
     y_train = np.array(labels)
     print(x_train.shape, y_train.shape)
+
     # RandomForest
     clf = LearningWithNoisyLabels(RandomForestClassifier(n_estimators=200))
     # KNN_1
@@ -74,7 +79,7 @@ def classification(vectors, labels, noise):
 
     clf.fit(x_train, y_train)
 
-    # 输出psx(概率)
+    # Use cleanlab to compute out-of-sample predicted probabilities (psx)
     psx = estimate_cv_predicted_probabilities(
         X=x_train,
         labels=y_train,
@@ -85,14 +90,39 @@ def classification(vectors, labels, noise):
     psx_list = []
     for pro in list(psx):
         psx_list.append(list(pro))
-    with open('new_psx_malscan-{}n.txt'.format(noise), 'w') as pf:
+    with open('new_psx_malscan-{}n.txt'.format(noise_ratio), 'w') as pf:
         pf.write(str(psx_list))
+
     label_errors_mask = get_noise_indices(s=y_train, psx=psx)
-    with open('new_labelerrorsmask-{}n.txt'.format(noise), 'w') as ef:
+    with open('new_labelerrorsmask-{}n.txt'.format(noise_ratio), 'w') as ef:
         ef.write(str(list(label_errors_mask)))
-    label_errors_mask_2 = get_noise_indices(s=y_train, psx=psx, sorted_index_method='normalized_margin')
-    with open('new_labelerrorsmask_2-{}n.txt'.format(noise), 'w') as ef:
-        ef.write(str(list(label_errors_mask_2)))
+
+
+def predict_noise_2(vectors, labels):
+    x_train = np.array(vectors, dtype=np.float32)
+    y_train = np.array(labels)
+    print(x_train.shape, y_train.shape)
+    # Compute out-of-sample predicted probabilities through cross-validation
+    # RandomForest
+    Parameters = {'n_estimators': [10, 50, 100, 200, 500, 1000],
+                  'bootstrap': [True, False],
+                  'criterion': ['gini', 'entropy']}
+    Clf = GridSearchCV(RandomForestClassifier(), Parameters, cv=5, scoring='f1', n_jobs=-1)
+    RFmodels = Clf.fit(x_train, y_train)
+    BestModel = RFmodels.best_estimator_
+    num_crossval_folds = 5  # for efficiency; values like 5 or 10 will generally work better
+    psx = cross_val_predict(
+        BestModel,
+        x_train,
+        y_train,
+        cv=num_crossval_folds,
+        method="predict_proba",
+    )
+
+    label_errors_mask = get_noise_indices(s=y_train, psx=psx)
+    with open('new_labelerrorsmask-{}n.txt'.format(noise_ratio), 'w') as ef:
+        ef.write(str(list(label_errors_mask)))
+
 
 def parseargs():
     parser = argparse.ArgumentParser(description='Malware Detection with centrality.')
@@ -116,19 +146,19 @@ def main():
 
     if type == 'degree':
         degree_vectors, degree_labels = degree_centrality_feature(feature_dir)
-        classification(degree_vectors, degree_labels, 10)
+        predict_noise(degree_vectors, degree_labels)
 
     elif type == 'harmonic':
         harmonic_vectors, harmonic_labels = harmonic_centrality_feature(feature_dir)
-        classification(harmonic_vectors, harmonic_labels, 35)
-
+        # classification(harmonic_vectors, harmonic_labels, 35)
+        predict_noise(harmonic_vectors, harmonic_labels)
     elif type == 'katz':
         katz_vectors, katz_labels = katz_centrality_feature(feature_dir)
-        classification(katz_vectors, katz_labels, 10)
+        predict_noise(katz_vectors, katz_labels)
 
     elif type == 'closeness':
         closeness_vectors, closeness_labels = closeness_centrality_feature(feature_dir)
-        classification(closeness_vectors, closeness_labels, 30)
+        predict_noise(closeness_vectors, closeness_labels)
 
     else:
         print('Error Centrality Type!')
