@@ -9,7 +9,8 @@ Our tool currently integrated three open source malware detection approaches: [D
 
 After obtaining the (out-of-sample) predicted probabilities of each individual model, use the ensemble learning method to find label errors using cleanlab.
 
-Besides, you might want to collect/extract the developer identities of each app. Create a table (may be a csv file) containing the signature or other information with each app in a line.
+Besides, you might want to collect/extract the developer identities of each app. Create a table (may be a csv file) containing developer signatures and other information with each app in one row.
+
 
 Extension:
 Besides the used three approaches (i.e., Drebin, CSBD, MalScan), you can also try to add (or replace with) other malware detection techniques. But keep in mind that each individual model should perform not badly in malware detection so that the ensembled result would be better.
